@@ -17,6 +17,11 @@ should continue until you decide to terminate.
 2. Best Fit
 3. Worst Fit
 
+### Extra Implementations
+Compaction - either when the waiting 
+queue exceeds a certain value or after a certain interval of time, or when the user 
+chooses to compact memory 
+
 ### TODO
 Draw all components including:
 * Memory Container
