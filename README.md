@@ -28,3 +28,4 @@ Draw all components including:
 * Algorithms drop down menu
 * Input for PID (Process ID#)
 * Input for Process Size
+* ... more to follow
