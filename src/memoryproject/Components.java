@@ -1,5 +1,6 @@
 package memoryproject;
 
+import java.awt.Canvas;
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.Graphics;
@@ -24,10 +25,13 @@ public class Components extends JPanel{
     private int pid = 0;
     private int sizeOfProcess = 64;
     
+    private Color honeyDew = new Color(240, 255, 240);
+    private Color cherryBlossom = new Color(255, 221, 228);
+    
     public Components(){
         setLayout(null);
         setSize(WIDTH,HEIGHT);
-        setBackground(Color.PINK);
+        setBackground(cherryBlossom);
         
         addPIDLabel();
         addPIDTextBox();
@@ -37,6 +41,8 @@ public class Components extends JPanel{
         
         addAlgorithmLabel();
         addMemoryAlgorithms();
+        
+        add(new MemoryContainer());
         setVisible(true);
         repaint();
     }
@@ -83,5 +89,26 @@ public class Components extends JPanel{
         add(memSizeInput);
     }
     
-   
+    public class MemoryContainer extends Canvas {
+        private int heightOfContainer = 350;
+        public MemoryContainer(){
+            super();
+            this.setBounds(250, 0, 250, 570);
+            this.setBackground(honeyDew);
+        }
+        
+        @Override
+        public void paint(Graphics g){
+            drawContainer(g);
+            drawMinimumSize(g);
+        }
+        
+        public void drawContainer(Graphics g){
+            g.drawRect(50, 50, 182, 400);
+        }
+        
+        public void drawMinimumSize(Graphics g){
+            g.drawString("0KB", 20, 57);
+        }
+    }
 }
