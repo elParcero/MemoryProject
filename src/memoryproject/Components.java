@@ -27,6 +27,8 @@ public class Components extends JPanel{
     
     private Color honeyDew = new Color(240, 255, 240);
     private Color cherryBlossom = new Color(255, 221, 228);
+    private boolean processAdded = true;
+    private int processSize = 7;
     
     public Components(){
         setLayout(null);
@@ -42,7 +44,9 @@ public class Components extends JPanel{
         addAlgorithmLabel();
         addMemoryAlgorithms();
         
-        add(new MemoryContainer());
+        MemoryContainer containsMemory = new MemoryContainer();
+        add(containsMemory);
+        
         setVisible(true);
         repaint();
     }
@@ -89,8 +93,17 @@ public class Components extends JPanel{
         add(memSizeInput);
     }
     
+    
     public class MemoryContainer extends Canvas {
-        private int heightOfContainer = 350;
+        private int heightOfContainer = 400;
+        private int widthOfContainer = 182;
+        
+        private int heightOfBlock = 0;
+        private int widthOfBlock = 182;
+        
+        private int x = 50, y = 50;
+        private int numOfProcessesInContainer = 0;
+        
         public MemoryContainer(){
             super();
             this.setBounds(250, 0, 250, 570);
@@ -99,16 +112,26 @@ public class Components extends JPanel{
         
         @Override
         public void paint(Graphics g){
-            drawContainer(g);
+            drawMemoryContainer(g);
             drawMinimumSize(g);
+            if(processAdded){
+                drawMemoryBlock(g);
+            }
         }
         
-        public void drawContainer(Graphics g){
-            g.drawRect(50, 50, 182, 400);
+        public void drawMemoryContainer(Graphics g){
+            g.drawRect(x, y, widthOfContainer, heightOfContainer);
         }
         
         public void drawMinimumSize(Graphics g){
             g.drawString("0KB", 20, 57);
+        }  
+        
+        public void drawMemoryBlock(Graphics g){
+            if(numOfProcessesInContainer == 0){
+                heightOfBlock = heightOfContainer / processSize;
+                g.drawRect(x, y, widthOfBlock, heightOfBlock);
+            }          
         }
     }
 }
