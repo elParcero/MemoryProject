@@ -4,6 +4,9 @@ import java.awt.Canvas;
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.Graphics;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -27,8 +30,12 @@ public class Components extends JPanel{
     
     private Color honeyDew = new Color(240, 255, 240);
     private Color cherryBlossom = new Color(255, 221, 228);
-    private boolean processAdded = true;
+    
+    private boolean processAdded = false;
     private int processSize = 7;
+    
+    JButton test = new JButton("test");
+    
     
     public Components(){
         setLayout(null);
@@ -44,11 +51,34 @@ public class Components extends JPanel{
         addAlgorithmLabel();
         addMemoryAlgorithms();
         
+        
+        
         MemoryContainer containsMemory = new MemoryContainer();
         add(containsMemory);
         
+        addTestButton();
+        
         setVisible(true);
         repaint();
+    }
+    
+    public void addTestButton(){
+        test.setBounds(10, 300, 50, 25);
+        test.setVisible(true);
+        add(test);
+        test.addActionListener(new TestClicked());
+    }
+    
+    public class TestClicked implements ActionListener{
+
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            if(e.getActionCommand().equalsIgnoreCase("test")){
+                processAdded = true;
+                add(new MemoryContainer());
+            }
+        }
+    
     }
     
     public void addAlgorithmLabel(){
@@ -95,14 +125,16 @@ public class Components extends JPanel{
     
     
     public class MemoryContainer extends Canvas {
+        private int x = 50, y = 50;
+        private int numOfProcessesInContainer = 0;
+        
         private int heightOfContainer = 400;
         private int widthOfContainer = 182;
         
         private int heightOfBlock = 0;
         private int widthOfBlock = 182;
         
-        private int x = 50, y = 50;
-        private int numOfProcessesInContainer = 0;
+        
         
         public MemoryContainer(){
             super();
