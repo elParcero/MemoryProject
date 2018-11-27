@@ -6,6 +6,7 @@ import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.ArrayList;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
@@ -134,7 +135,7 @@ public class Components extends JPanel{
         private int heightOfBlock = 0;
         private int widthOfBlock = 182;
         
-        
+        private int previousHeight;
         
         public MemoryContainer(){
             super();
@@ -160,10 +161,10 @@ public class Components extends JPanel{
         }  
         
         public void drawMemoryBlock(Graphics g){
-            if(numOfProcessesInContainer == 0){
                 heightOfBlock = heightOfContainer / processSize;
+                this.previousHeight = y + heightOfBlock;
                 g.drawRect(x, y, widthOfBlock, heightOfBlock);
-            }          
+                numOfProcessesInContainer++;    
         }
     }
 }
