@@ -25,8 +25,8 @@ public class Components extends JPanel{
     private JComboBox memoryAlgos = new JComboBox(algorithms);
     
     private String algoSelected = "1. First Fit";
+    private String process = "Process 1";
     
-    private int sizeOfProcess = 64;
     private int processSize = 7;
     
     private JLabel pidLabel = new JLabel("PID #:");
@@ -49,11 +49,11 @@ public class Components extends JPanel{
     
     private boolean processAdded = false;
     
-    private JButton test = new JButton("test");
     private JButton addMemoryBlock = new JButton("Add Memory Block");
     private JButton removeMemoryBlock = new JButton("Remove Memory Block");
-    
     private JButton compactMemory = new JButton("Compact Memory");
+    
+    private ArrayList<MemoryBlock> blocks = new ArrayList();;
     
     public Components(){
         setLayout(null);
@@ -70,10 +70,9 @@ public class Components extends JPanel{
         addMemoryAlgorithmsList();
         
         
-        MemoryContainer containsMemory = new MemoryContainer();
-        add(containsMemory);
+        //MemoryContainer containsMemory = new MemoryContainer();
+        //add(containsMemory);
         
-        addTestButton();
         addMemoryAddButton();
         addMemoryRemoveButton();
         addCompactMemoryButton();
@@ -87,6 +86,8 @@ public class Components extends JPanel{
         addMemoryBlock.setFont(font1);
         addMemoryBlock.setVisible(true);
         add(addMemoryBlock);
+        addMemoryBlock.addActionListener(new AddMemoryBlock());
+        repaint();
     }
     
     public void addMemoryRemoveButton(){
@@ -94,6 +95,7 @@ public class Components extends JPanel{
         removeMemoryBlock.setFont(font1);
         removeMemoryBlock.setVisible(true);
         add(removeMemoryBlock);
+        repaint();
     }
     
     public void addCompactMemoryButton(){
@@ -101,31 +103,15 @@ public class Components extends JPanel{
         compactMemory.setFont(font1);
         compactMemory.setVisible(true);
         add(compactMemory);
+        repaint();
     }
-    
-    public void addTestButton(){
-        test.setBounds(10, 300, 50, 25);
-        test.setVisible(true);
-        add(test);
-        test.addActionListener(new TestClicked());
-    }
-    
-    public class TestClicked implements ActionListener{
-
-        @Override
-        public void actionPerformed(ActionEvent e) {
-            if(e.getActionCommand().equalsIgnoreCase("test")){
-                processAdded = true;
-                add(new MemoryContainer());
-            }
-        }
-    }
-    
+     
     public void addAlgorithmLabel(){
         algoLabel.setBounds(5, 20, 90, 30);
         algoLabel.setFont(font1);
         algoLabel.setVisible(true);
         add(algoLabel);
+        repaint();
     }
     
     public void addMemoryAlgorithmsList(){
@@ -134,6 +120,7 @@ public class Components extends JPanel{
         memoryAlgos.setBounds(80, 20, 125, 30);
         memoryAlgos.setVisible(true);
         add(memoryAlgos);
+        repaint();
     }
     
     public void addPIDLabel(){
@@ -141,6 +128,7 @@ public class Components extends JPanel{
         pidLabel.setFont(font1);
         pidLabel.setVisible(true);
         add(pidLabel);
+        repaint();
     }
     
     public void addPIDList(){
@@ -149,6 +137,7 @@ public class Components extends JPanel{
         pidList.setFont(font1);
         pidList.setVisible(true);
         add(pidList);
+        repaint();
     }
     
     public void addMemSizeLabel(){
@@ -156,6 +145,7 @@ public class Components extends JPanel{
         memSizeLabel.setFont(font1);
         memSizeLabel.setVisible(true);
         add(memSizeLabel);
+        repaint();
     }
     
     public void addMemSizeInput(){
@@ -163,55 +153,54 @@ public class Components extends JPanel{
         memSizeInput.setFont(font1);
         memSizeInput.setVisible(true);
         add(memSizeInput);
+        repaint();
     }
     
-    public class MemoryContainer extends Canvas {
-        private int x = 60, y = 50;
-        private int numOfProcessesInContainer = 0;
+    
+    private int x = 300, y = 50, widthOfContainer = 182, heightOfContainer = 400;
+    private int newY = 0;
+    private int numOfProcesses = 0;
+    
+    @Override
+    public void paintComponent(Graphics g){
+        // x = 300 | y = 50 | width = 182 | height = 400
+        g.drawRect(x, y, widthOfContainer, heightOfContainer);
+         
+        g.drawString("0KB", x-35, 57);
+        g.drawString("8192KB", x-55, 455);
         
-        private int heightOfContainer = 400;
-        private int widthOfContainer = 182;
-        
-        private int heightOfBlock = 0;
-        private int widthOfBlock = 182;
-        
-        private int previousHeight;
-        
-        public MemoryContainer(){
-            super();
-            this.setBounds(240, 0, 260, 570);
-            this.setBackground(honeyDew);
+        for(MemoryBlock block: blocks){
+            block.drawFirstFit(g);
+            repaint();
         }
-        
+    }
+    
+    public class AddMemoryBlock implements ActionListener {
+
         @Override
-        public void paint(Graphics g){
-            drawMemoryContainer(g);
-            drawMinimumSize(g);
-            drawMaximumSize(g);
-            if(processAdded){
-                drawMemoryBlock(g);
+        public void actionPerformed(ActionEvent e) {
+            
+            if(!memSizeInput.getText().equalsIgnoreCase("")){
+                processSize = Integer.parseInt(memSizeInput.getText());
+            }
+            
+            int heightOfBlock = processSize * 7;
+            if(numOfProcesses == 0){ 
+                addMemBlock(new MemoryBlock(x, y, 182, heightOfBlock, processSize));   
+                newY = y + heightOfBlock;
+                numOfProcesses++;
+            }else{
+                if(newY <= heightOfContainer){
+                    addMemBlock(new MemoryBlock(x, newY, 182, heightOfBlock, processSize));
+                    newY = newY + heightOfBlock;
+                    numOfProcesses++;
+                }  
             }
         }
         
-        public void drawMemoryContainer(Graphics g){
-            // x = 60 | y = 50 | width = 182 | height = 400
-            g.drawRect(x, y, widthOfContainer, heightOfContainer);
+        public void addMemBlock(MemoryBlock block){
+            blocks.add(block);
+            repaint();
         }
-        
-        public void drawMinimumSize(Graphics g){
-            g.drawString("0KB", 20, 57);
-        }  
-        
-        public void drawMaximumSize(Graphics g){
-            g.drawString("8192KB",5, 455);
-        }
-        
-        public void drawMemoryBlock(Graphics g){
-                heightOfBlock = heightOfContainer / processSize;
-                this.previousHeight = y + heightOfBlock;
-                g.fillRect(x, y, widthOfBlock, heightOfBlock);
-                numOfProcessesInContainer++;    
-                System.out.println(numOfProcessesInContainer);
-        }
-    }
+    }                  
 }
