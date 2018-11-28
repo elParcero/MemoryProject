@@ -1,5 +1,6 @@
 package memoryproject;
 
+import javax.swing.JOptionPane;
 import java.awt.Canvas;
 import java.awt.Color;
 import java.awt.Font;
@@ -95,6 +96,7 @@ public class Components extends JPanel{
         removeMemoryBlock.setFont(font1);
         removeMemoryBlock.setVisible(true);
         add(removeMemoryBlock);
+        removeMemoryBlock.addActionListener(new RemoveMemoryBlock());
         repaint();
     }
     
@@ -182,16 +184,17 @@ public class Components extends JPanel{
             
             if(!memSizeInput.getText().equalsIgnoreCase("")){
                 processSize = Integer.parseInt(memSizeInput.getText());
+                pid = pidList.getSelectedIndex() + 1;
             }
             
             int heightOfBlock = processSize * 7;
             if(numOfProcesses == 0){ 
-                addMemBlock(new MemoryBlock(x, y, 182, heightOfBlock, processSize));   
+                addMemBlock(new MemoryBlock(x, y, 182, heightOfBlock, processSize, pid));   
                 newY = y + heightOfBlock;
                 numOfProcesses++;
             }else{
                 if(newY <= heightOfContainer){
-                    addMemBlock(new MemoryBlock(x, newY, 182, heightOfBlock, processSize));
+                    addMemBlock(new MemoryBlock(x, newY, 182, heightOfBlock, processSize, pid));
                     newY = newY + heightOfBlock;
                     numOfProcesses++;
                 }  
@@ -202,5 +205,30 @@ public class Components extends JPanel{
             blocks.add(block);
             repaint();
         }
-    }                  
-}
+    }
+        
+        public class RemoveMemoryBlock implements ActionListener 
+        {
+
+            @Override
+            public void actionPerformed(ActionEvent e) 
+            {
+                pid = pidList.getSelectedIndex() + 1;
+                if(numOfProcesses == 0)
+                {
+                    JOptionPane.showMessageDialog(null, "There are no processes to remove!");
+                }
+                else if(numOfProcesses == 1)
+                {
+                    blocks.clear();
+                    repaint();
+                }
+                else
+                {
+                    blocks.remove(pidList.getSelectedIndex());
+                    
+                    revalidate();
+                }
+            }
+        }
+}                  
