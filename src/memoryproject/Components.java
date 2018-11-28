@@ -16,8 +16,7 @@ import javax.swing.JTextField;
 public class Components extends JPanel{
     private static final int WIDTH = 500, HEIGHT = 570;
     private Font font1 = new Font("SansSerif", Font.PLAIN, 13);
-    private JLabel pidLabel = new JLabel("PID #:");
-    private JTextField pidInput = new JTextField();
+    
     private JLabel memSizeLabel = new JLabel("Size:");
     private JTextField memSizeInput = new JTextField();
     
@@ -26,9 +25,12 @@ public class Components extends JPanel{
     private JComboBox memoryAlgos = new JComboBox(algorithms);
     
     private String algoSelected = "1. First Fit";
-    private int pid = 0;
-    private int sizeOfProcess = 64;
     
+    private int sizeOfProcess = 64;
+    private int processSize = 7;
+    
+    private JLabel pidLabel = new JLabel("PID #:");
+    private int pid = 0;
     private String[] pids = {"Process 1",
                              "Process 2",
                              "Process 3",
@@ -46,10 +48,12 @@ public class Components extends JPanel{
     private Color cherryBlossom = new Color(255, 221, 228);
     
     private boolean processAdded = false;
-    private int processSize = 7;
     
-    JButton test = new JButton("test");
+    private JButton test = new JButton("test");
+    private JButton addMemoryBlock = new JButton("Add Memory Block");
+    private JButton removeMemoryBlock = new JButton("Remove Memory Block");
     
+    private JButton compactMemory = new JButton("Compact Memory");
     
     public Components(){
         setLayout(null);
@@ -57,24 +61,46 @@ public class Components extends JPanel{
         setBackground(cherryBlossom);
         
         addPIDLabel();
-        //addPIDTextBox();
         addPIDList();
         
         addMemSizeLabel();
         addMemSizeInput();
         
         addAlgorithmLabel();
-        addMemoryAlgorithms();
-        
+        addMemoryAlgorithmsList();
         
         
         MemoryContainer containsMemory = new MemoryContainer();
         add(containsMemory);
         
         addTestButton();
+        addMemoryAddButton();
+        addMemoryRemoveButton();
+        addCompactMemoryButton();
         
         setVisible(true);
         repaint();
+    }
+    
+    public void addMemoryAddButton(){
+        addMemoryBlock.setBounds(60, 300, 170, 35);
+        addMemoryBlock.setFont(font1);
+        addMemoryBlock.setVisible(true);
+        add(addMemoryBlock);
+    }
+    
+    public void addMemoryRemoveButton(){
+        removeMemoryBlock.setBounds(60, 350, 170, 35);
+        removeMemoryBlock.setFont(font1);
+        removeMemoryBlock.setVisible(true);
+        add(removeMemoryBlock);
+    }
+    
+    public void addCompactMemoryButton(){
+        compactMemory.setBounds(60, 400, 170, 35);
+        compactMemory.setFont(font1);
+        compactMemory.setVisible(true);
+        add(compactMemory);
     }
     
     public void addTestButton(){
@@ -93,61 +119,54 @@ public class Components extends JPanel{
                 add(new MemoryContainer());
             }
         }
-    
     }
     
     public void addAlgorithmLabel(){
-        algoLabel.setBounds(15, 20, 90, 30);
+        algoLabel.setBounds(5, 20, 90, 30);
         algoLabel.setFont(font1);
         algoLabel.setVisible(true);
         add(algoLabel);
     }
     
-    public void addMemoryAlgorithms(){
+    public void addMemoryAlgorithmsList(){
         memoryAlgos.setEditable(false);
-        memoryAlgos.setBounds(90, 20, 125, 30);
+        memoryAlgos.setFont(font1);
+        memoryAlgos.setBounds(80, 20, 125, 30);
         memoryAlgos.setVisible(true);
         add(memoryAlgos);
     }
     
     public void addPIDLabel(){
-        pidLabel.setBounds(52, 100, 70, 30);
+        pidLabel.setBounds(42, 100, 70, 30);
         pidLabel.setFont(font1);
         pidLabel.setVisible(true);
         add(pidLabel);
     }
     
     public void addPIDList(){
-        pidList.setBounds(90, 100, 150, 30);
+        pidList.setEditable(false);
+        pidList.setBounds(80, 100, 125, 30);
         pidList.setFont(font1);
         pidList.setVisible(true);
         add(pidList);
     }
     
-    public void addPIDTextBox(){
-        pidInput.setBounds(90,100, 70,30);
-        pidInput.setFont(font1);
-        pidInput.setVisible(true);
-        add(pidInput);
-    }
-    
     public void addMemSizeLabel(){
-        memSizeLabel.setBounds(57, 150, 70, 30);
+        memSizeLabel.setBounds(47, 150, 70, 30);
         memSizeLabel.setFont(font1);
         memSizeLabel.setVisible(true);
         add(memSizeLabel);
     }
     
     public void addMemSizeInput(){
-        memSizeInput.setBounds(90, 150, 70, 30);
+        memSizeInput.setBounds(80, 150, 70, 30);
         memSizeInput.setFont(font1);
         memSizeInput.setVisible(true);
         add(memSizeInput);
     }
     
-    
     public class MemoryContainer extends Canvas {
-        private int x = 50, y = 50;
+        private int x = 60, y = 50;
         private int numOfProcessesInContainer = 0;
         
         private int heightOfContainer = 400;
@@ -160,7 +179,7 @@ public class Components extends JPanel{
         
         public MemoryContainer(){
             super();
-            this.setBounds(250, 0, 250, 570);
+            this.setBounds(240, 0, 260, 570);
             this.setBackground(honeyDew);
         }
         
@@ -168,12 +187,14 @@ public class Components extends JPanel{
         public void paint(Graphics g){
             drawMemoryContainer(g);
             drawMinimumSize(g);
+            drawMaximumSize(g);
             if(processAdded){
                 drawMemoryBlock(g);
             }
         }
         
         public void drawMemoryContainer(Graphics g){
+            // x = 60 | y = 50 | width = 182 | height = 400
             g.drawRect(x, y, widthOfContainer, heightOfContainer);
         }
         
@@ -181,11 +202,16 @@ public class Components extends JPanel{
             g.drawString("0KB", 20, 57);
         }  
         
+        public void drawMaximumSize(Graphics g){
+            g.drawString("8192KB",5, 455);
+        }
+        
         public void drawMemoryBlock(Graphics g){
                 heightOfBlock = heightOfContainer / processSize;
                 this.previousHeight = y + heightOfBlock;
-                g.drawRect(x, y, widthOfBlock, heightOfBlock);
+                g.fillRect(x, y, widthOfBlock, heightOfBlock);
                 numOfProcessesInContainer++;    
+                System.out.println(numOfProcessesInContainer);
         }
     }
 }
