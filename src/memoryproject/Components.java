@@ -29,6 +29,19 @@ public class Components extends JPanel{
     private int pid = 0;
     private int sizeOfProcess = 64;
     
+    private String[] pids = {"Process 1",
+                             "Process 2",
+                             "Process 3",
+                             "Process 4",
+                             "Process 5",
+                             "Process 6",
+                             "Process 7",
+                             "Process 8",
+                             "Process 9",
+                             "Process 10",
+                             "Process 11"};
+    private JComboBox pidList = new JComboBox(pids);
+    
     private Color honeyDew = new Color(240, 255, 240);
     private Color cherryBlossom = new Color(255, 221, 228);
     
@@ -44,7 +57,8 @@ public class Components extends JPanel{
         setBackground(cherryBlossom);
         
         addPIDLabel();
-        addPIDTextBox();
+        //addPIDTextBox();
+        addPIDList();
         
         addMemSizeLabel();
         addMemSizeInput();
@@ -101,6 +115,13 @@ public class Components extends JPanel{
         pidLabel.setFont(font1);
         pidLabel.setVisible(true);
         add(pidLabel);
+    }
+    
+    public void addPIDList(){
+        pidList.setBounds(90, 100, 150, 30);
+        pidList.setFont(font1);
+        pidList.setVisible(true);
+        add(pidList);
     }
     
     public void addPIDTextBox(){
