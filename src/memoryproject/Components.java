@@ -218,16 +218,16 @@ public class Components extends JPanel{
                 {
                     JOptionPane.showMessageDialog(null, "There are no processes to remove!");
                 }
-                else if(numOfProcesses == 1)
-                {
-                    blocks.clear();
-                    repaint();
-                }
                 else
                 {
-                    blocks.remove(pidList.getSelectedIndex());
-                    
-                    revalidate();
+                    for(int i = 0; i < blocks.size(); i++)
+                    {
+                        if(blocks.get(i).getPID() == pid)
+                        {
+                            blocks.remove(i);
+                        }
+                    }
+                    repaint();
                 }
             }
         }

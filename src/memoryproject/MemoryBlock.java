@@ -23,6 +23,11 @@ public class MemoryBlock {
         return heightOfBlock;
     }
     
+    public int getPID()
+    {
+        return pid;
+    }
+    
     public void drawFirstFit(Graphics g){
         g.setColor(honeyDew);
         g.fillRect(x+1, y+1, widthOfBlock-2, heightOfBlock);
@@ -31,5 +36,7 @@ public class MemoryBlock {
         g.drawRect(x, y, widthOfBlock, heightOfBlock);
         
         g.drawString(String.valueOf(processSize) + "kb", x-30, y + heightOfBlock);
+        
+        g.drawString("Process " + String.valueOf(pid), x + 60, y + heightOfBlock - 2);
     }
 }
