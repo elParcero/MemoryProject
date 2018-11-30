@@ -155,8 +155,7 @@ public class Components extends JPanel{
         add(memSizeInput);
         repaint();
     }
-    
-    
+
     private int x = 300, y = 50, widthOfContainer = 182, heightOfContainer = 400;
     private int newY = 0;
     private int numOfProcesses = 0;
@@ -167,11 +166,10 @@ public class Components extends JPanel{
         g.drawRect(x, y, widthOfContainer, heightOfContainer);
          
         g.drawString("0KB", x-35, 57);
-        g.drawString("8192KB", x-55, 455);
+        g.drawString("400KB", x-55, 455);
         
         for(MemoryBlock block: blocks){
             block.drawFirstFit(g);
-            repaint();
         }
     }
     
@@ -184,7 +182,9 @@ public class Components extends JPanel{
                 processSize = Integer.parseInt(memSizeInput.getText());
             }
             
-            int heightOfBlock = processSize * 7;
+            int heightOfBlock = 0;
+            
+            heightOfBlock = processSize;
             if(numOfProcesses == 0){ 
                 addMemBlock(new MemoryBlock(x, y, 182, heightOfBlock, processSize));   
                 newY = y + heightOfBlock;
