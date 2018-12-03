@@ -29,6 +29,7 @@ public class Components extends JPanel{
     private String process = "Process 1";
     
     private int processSize = 7;
+    private int counter = 0;
     
     private JLabel pidLabel = new JLabel("PID #:");
     private int pid = 0;
@@ -54,7 +55,16 @@ public class Components extends JPanel{
     private JButton removeMemoryBlock = new JButton("Remove Memory Block");
     private JButton compactMemory = new JButton("Compact Memory");
     
-    private ArrayList<MemoryBlock> blocks = new ArrayList();;
+    boolean pidFixed = true;
+    private boolean initializationFinished = false;
+    
+    private MemoryBlock blockA;
+    private MemoryBlock blockB;
+    
+    private ArrayList<MemoryBlock> blocks = new ArrayList();
+    private ArrayList<MemoryBlock> blocksPIDFix = new ArrayList();
+    
+    private int counterPIDFixed = 0;
     
     public Components(){
         setLayout(null);
@@ -167,45 +177,139 @@ public class Components extends JPanel{
     public void paintComponent(Graphics g){
         // x = 300 | y = 50 | width = 182 | height = 400
         g.drawRect(x, y, widthOfContainer, heightOfContainer);
-         
-        g.drawString("0KB", x-35, 57);
-        g.drawString("8192KB", x-55, 455);
         
-        for(MemoryBlock block: blocks){
+        g.drawString("0KB", x-35, 57);
+        g.drawString("400KB", x-55, 455);
+        
+        if(initializationFinished == true)
+        {
+            for(MemoryBlock block: blocks){
             block.drawFirstFit(g);
             repaint();
+            }
+        
+        System.out.println("Before if statement for if pidFixed -- pidFixed = " +pidFixed);
+        if(pidFixed == false)
+            {
+                if(counterPIDFixed == 1)
+                {
+                    for(int i = blocks.size() - 1; blocks.size() > i; i++)
+                    {
+                        for(int j = 0; blocksPIDFix.size() > j; j++)
+                        {
+                            blocks.get(i).setHeightOfBlock(blocksPIDFix.get(j).getHeightOfBlock());
+                            blockA = blocks.get(i);
+                            blocksPIDFix.remove(j);
+                            blocksPIDFix.trimToSize();
+                            blockA.drawFirstFit(g);
+                            System.out.println("Here in paint component fixPID");
+                        }
+                    }
+                }
+                counterPIDFixed++;
+            }
+        repaint();
+        initializationFinished = false;
         }
+        else
+        {
+           return;
+        }
+        
+        
     }
-    
+
     public class AddMemoryBlock implements ActionListener {
 
         @Override
         public void actionPerformed(ActionEvent e) {
             
+            
             if(!memSizeInput.getText().equalsIgnoreCase("")){
                 processSize = Integer.parseInt(memSizeInput.getText());
                 pid = pidList.getSelectedIndex() + 1;
             }
+           
+            int heightOfBlock = 0;
+            heightOfBlock = processSize;
             
-            int heightOfBlock = processSize * 7;
             if(numOfProcesses == 0){ 
                 addMemBlock(new MemoryBlock(x, y, 182, heightOfBlock, processSize, pid));   
                 newY = y + heightOfBlock;
                 numOfProcesses++;
-            }else{
-                if(newY <= heightOfContainer){
+            }
+            else
+            {
+                if(newY <= heightOfContainer)
+                {
                     addMemBlock(new MemoryBlock(x, newY, 182, heightOfBlock, processSize, pid));
                     newY = newY + heightOfBlock;
                     numOfProcesses++;
-                }  
+                }     
+            }
+                
+                 
             }
         }
         
         public void addMemBlock(MemoryBlock block){
+            boolean checkPIDFix;
             blocks.add(block);
+            System.out.println("In blocks added method");
+            if(blocks.size() == 1)
+            {
+                initializationFinished = true;
+            }
+            else
+            {
+               checkPIDFix = checkIfPIDAdded();
+               if(checkPIDFix = false)
+                {
+                    if(blocksPIDFix.size() > 0)
+                    {
+                        pidFixed = false;
+                        System.out.println("In addMemBlock checking blocksPIDFix.size pidFixed = " + pidFixed);
+                        initializationFinished = false;
+                    }
+                }
+               else
+               {
+                    System.out.println("In addMemBlock, checking blocksPIDFix.size this triggers if there is no blocksPIDFix");
+                    initializationFinished = true;
+               }
+            }
+           
             repaint();
         }
-    }
+
+        public boolean checkIfPIDAdded() 
+        {
+            for(int i = 0; i < blocks.size(); i++)
+                {    
+                    for(int j = i + 1; j < blocks.size(); j++)
+                    {
+                        int pid1 = blocks.get(i).getPID();
+                        int pid2 = blocks.get(j).getPID();
+                        if(pid1 == pid2)
+                        {
+                            JOptionPane.showMessageDialog(null, "Process " + pid1 + " has already been added! Choose another process.");
+                            blocksPIDFix.add(blocks.get(j));
+                            blocks.remove(j);
+                            blocks.trimToSize();
+                            pidFixed = false;//RedrawBlocks method would need to be called here
+                            initializationFinished = false;
+                            System.out.println("In PIDFixed, pidFixed = " + pidFixed + " initialzationFinished = " + initializationFinished);
+                            return false;
+                        }
+                    }
+                }
+            return true;
+        }
+        
+        public void redrawBlocks()
+        {
+            
+        }
         
         public class RemoveMemoryBlock implements ActionListener 
         {
