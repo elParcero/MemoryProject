@@ -28,4 +28,5 @@ Draw all components including:
 * Algorithms drop down menu
 * Input for PID (Process ID#)
 * Input for Process Size
-* ... more to follow
+
+This repo will be archived ... bad programmer ... it was a failure ... I will try again ...
